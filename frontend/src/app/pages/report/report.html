@@ -1,0 +1,89 @@
+<section class="report-shell">
+  <header class="report-hero">
+    <div>
+      <p class="eyebrow">Signalement Citoyen</p>
+      <h1>Signaler un problème</h1>
+      <p>Permettez à votre ville de devenir plus sûre et plus propre en signalant rapidement un incident.</p>
+    </div>
+  </header>
+
+  <div class="report-form-container">
+    <div class="report-form">
+      <div class="form-grid">
+        <div class="form-section image-upload">
+          <h3>📸 Ajouter une photo</h3>
+          <label class="upload-area" [class.has-image]="!!imagePreview">
+            <div class="upload-placeholder" *ngIf="!imagePreview">
+              <span class="upload-icon">📷</span>
+              <p>Glissez une photo ou cliquez ici pour ajouter une image.</p>
+              <small>JPEG, PNG, GIF | max 5MB</small>
+            </div>
+            <img *ngIf="imagePreview" [src]="imagePreview" alt="Aperçu du signalement" class="image-preview" />
+            <input type="file" accept="image/*" (change)="onFileSelected($event)" hidden />
+          </label>
+        </div>
+
+        <div class="form-section location-section">
+          <h3>📍 Localisation</h3>
+          <div class="location-action-wrapper">
+            <button type="button" class="submit-btn location-btn" (click)="useCurrentLocation()">Utiliser ma position actuelle</button>
+          </div>
+          <div class="location-info">
+            <p>{{ locationMessage }}</p>
+            <small *ngIf="latitude !== null && longitude !== null">Latitude : {{ latitude }}, Longitude : {{ longitude }}</small>
+          </div>
+          <div class="map-wrapper">
+            <div #mapContainer class="map-container"></div>
+            <div class="map-center-pin">📍</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-section">
+        <h3>🏷️ Catégorie du problème</h3>
+        <select [(ngModel)]="selectedCategory" (change)="onCategoryChange()">
+          <option value="" disabled selected>Choisissez une catégorie</option>
+          <option *ngFor="let category of categories" [value]="category.key">{{ category.icon }} {{ category.name }}</option>
+        </select>
+      </div>
+
+      <div class="category-details" *ngIf="selectedCategory">
+        <h4>Détails de la catégorie</h4>
+        <p class="category-label">📌 Inclut :</p>
+        <ul>
+          <li *ngFor="let item of categories.find(c => c.key === selectedCategory)?.details">{{ item }}</li>
+        </ul>
+        <p *ngIf="categories.find(c => c.key === selectedCategory)?.objective" class="category-objective">
+          🎯 Objectif : {{ categories.find(c => c.key === selectedCategory)?.objective }}
+        </p>
+      </div>
+
+      <div class="form-section" *ngIf="selectedCategory">
+        <h3>🔍 Type de problème</h3>
+        <select [(ngModel)]="selectedProblem">
+          <option value="" disabled selected>Choisissez un type de problème</option>
+          <option *ngFor="let problem of categories.find(c => c.key === selectedCategory)?.problems" [value]="problem.value">{{ problem.label }}</option>
+        </select>
+      </div>
+
+      <div class="form-actions">
+        <button
+          type="button"
+          class="submit-btn"
+          (click)="sendSignal()"
+          [disabled]="isSubmitting || !selectedFile || !selectedCategory || !selectedProblem"
+        >
+          🚨 Envoyer le signalement
+        </button>
+      </div>
+
+      <div *ngIf="submitSuccess" class="success-message">
+        ✅ Signalement envoyé avec succès. Il sera visible dans la page admin et restera en attente de classification.
+      </div>
+
+      <div *ngIf="submitError" class="error-message">
+        ❌ {{ submitError }}
+      </div>
+    </div>
+  </div>
+</section>

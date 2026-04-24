@@ -1,1 +1,334 @@
 /* You can add global styles to this file, and also import other style files */
+
+body {
+  background: #f8fafc;
+  color: #0f172a;
+  transition: background 0.3s ease, color 0.3s ease;
+}
+
+body.dark {
+  background: #0f172a;
+  color: #ffffff;
+}
+
+body.dark *,
+body.dark ::before,
+body.dark ::after {
+  color: #ffffff !important;
+}
+
+body.dark ::placeholder,
+body.dark ::-webkit-input-placeholder,
+body.dark ::-moz-placeholder,
+body.dark :-ms-input-placeholder,
+body.dark :-moz-placeholder {
+  color: #cbd5e1 !important;
+}
+
+body.dark .page-card {
+  background: #111827 !important;
+  border-color: rgba(71, 85, 105, 0.3) !important;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.45) !important;
+}
+
+body.dark input,
+body.dark select {
+  background: #1f2937 !important;
+  color: #e2e8f0 !important;
+  border-color: #374151 !important;
+}
+
+body.dark .primary-btn,
+body.dark .upload-button {
+  background: #2563eb !important;
+  color: #fff !important;
+}
+
+body.dark .secondary-btn,
+body.dark .theme-toggle {
+  background: #1f2937 !important;
+  color: #e2e8f0 !important;
+  border-color: #374151 !important;
+}
+
+body.dark .success-message {
+  color: #86efac !important;
+}
+
+body.dark .error-message {
+  color: #fca5a5 !important;
+}
+
+/* Navbar styles for light mode */
+body.light .topnav {
+  background: rgba(255, 255, 255, 0.92) !important;
+  border-color: rgba(148, 163, 184, 0.18) !important;
+  box-shadow: 0 18px 48px rgba(15, 23, 42, 0.08) !important;
+}
+
+body.light .brand {
+  color: #111827 !important;
+}
+
+body.light .menu a {
+  color: #475569 !important;
+}
+
+body.light .menu a:hover {
+  background: rgba(37, 99, 235, 0.08) !important;
+  color: #1d4ed8 !important;
+}
+
+body.light .menu a.active {
+  background: rgba(37, 99, 235, 0.12) !important;
+  color: #1d4ed8 !important;
+  box-shadow: inset 0 0 0 1px rgba(37, 99, 235, 0.16) !important;
+}
+
+/* Navbar styles for dark mode */
+body.dark .topnav {
+  background: rgba(15, 23, 42, 0.92) !important;
+  border-color: rgba(71, 85, 105, 0.3) !important;
+  box-shadow: 0 18px 48px rgba(0, 0, 0, 0.45) !important;
+}
+
+body.dark .brand {
+  color: #f1f5f9 !important;
+}
+
+body.dark .menu a {
+  color: #cbd5e1 !important;
+}
+
+body.dark .menu a:hover {
+  background: rgba(59, 130, 246, 0.15) !important;
+  color: #60a5fa !important;
+}
+
+body.dark .menu a.active {
+  background: rgba(59, 130, 246, 0.2) !important;
+  color: #60a5fa !important;
+  box-shadow: inset 0 0 0 1px rgba(59, 130, 246, 0.3) !important;
+}
+
+body.dark .panel,
+body.dark .stat-card,
+body.dark .summary-card,
+body.dark .parking-form,
+body.dark .traffic-form,
+body.dark .sensor-form,
+body.dark .summary-panel,
+body.dark .map-panel,
+body.dark .parking-hero,
+body.dark .traffic-hero,
+body.dark .sensors-hero,
+body.dark .dashboard-shell,
+body.dark .parking-shell,
+body.dark .traffic-shell,
+body.dark .sensors-shell,
+body.dark .page-card,
+body.dark .page-shell,
+body.dark .auth-card,
+body.dark .card {
+  background: #111827 !important;
+  color: #e2e8f0 !important;
+  border-color: rgba(100, 116, 139, 0.3) !important;
+}
+
+body.dark .summary-card {
+  background: #111827 !important;
+  color: #e2e8f0 !important;
+  border-color: rgba(100, 116, 139, 0.3) !important;
+}
+
+html.dark .summary-card {
+  background: #111827 !important;
+  color: #e2e8f0 !important;
+  border-color: rgba(100, 116, 139, 0.3) !important;
+}
+
+body.dark .sensor-item,
+body.dark .parking-item,
+body.dark .route-row,
+body.dark .parking-card,
+body.dark .selected-card,
+body.dark .empty-selection,
+body.dark .sensor-card,
+body.dark .parking-row,
+body.dark .traffic-status-row div,
+body.dark .map-embed,
+body.dark .traffic-map-embed,
+body.dark .map-footer div,
+body.dark .map-placeholder,
+body.dark .parking-list .parking-row,
+body.dark .zone-card,
+body.dark .alert-card {
+  background: #111827 !important;
+  border-color: rgba(71, 85, 105, 0.4) !important;
+  color: #ffffff !important;
+}
+
+html.dark .sensor-item,
+html.dark .parking-item,
+html.dark .route-row,
+html.dark .parking-card,
+html.dark .selected-card,
+html.dark .empty-selection,
+html.dark .sensor-card,
+html.dark .parking-row,
+html.dark .traffic-status-row div,
+html.dark .map-embed,
+html.dark .traffic-map-embed,
+html.dark .map-footer div,
+html.dark .map-placeholder,
+html.dark .parking-list .parking-row,
+html.dark .zone-card,
+html.dark .alert-card {
+  background: #111827 !important;
+  border-color: rgba(71, 85, 105, 0.4) !important;
+  color: #ffffff !important;
+}
+
+html.dark .sensor-item,
+html.dark .parking-item,
+html.dark .route-row,
+html.dark .parking-card,
+html.dark .selected-card,
+html.dark .empty-selection,
+html.dark .sensor-card,
+html.dark .parking-row,
+html.dark .traffic-status-row div,
+html.dark .map-embed,
+html.dark .traffic-map-embed,
+html.dark .map-footer div,
+html.dark .map-placeholder,
+html.dark .parking-list .parking-row,
+html.dark .zone-card,
+html.dark .alert-card {
+  background: #111827 !important;
+  border-color: rgba(71, 85, 105, 0.4) !important;
+  color: #ffffff !important;
+}
+
+body.dark .status-badge,
+body.dark .status-chip,
+body.dark .alert-badge,
+body.dark .network-item,
+body.dark .legend-pill,
+body.dark .zone-card {
+  color: white !important;
+}
+
+body.dark .hero-meta {
+  background: #111827 !important;
+  border-color: rgba(71, 85, 105, 0.4) !important;
+}
+
+body.dark .hero-meta span {
+  color: #94a3b8 !important;
+}
+
+body.dark .hero-meta strong {
+  color: #e2e8f0 !important;
+}
+
+body.dark .status-pill {
+  background: #22c55e !important;
+  color: #0f172a !important;
+  box-shadow: inset 0 0 0 1px rgba(164, 243, 208, 0.4) !important;
+}
+
+body.dark app-profile {
+  background: url('https://images.unsplash.com/photo-1512453979798-5ea266f8880c?auto=format&fit=crop&w=1400&q=80') !important;
+  background-size: cover !important;
+  background-position: center !important;
+  background-repeat: no-repeat !important;
+}
+
+body.dark app-profile .profile-page,
+body.dark app-profile .profile-grid {
+  background: transparent !important;
+}
+
+body.dark app-profile .profile-hero,
+body.dark app-profile .profile-overview,
+body.dark app-profile .profile-form-card,
+body.dark app-profile .card,
+body.dark app-profile .avatar-block,
+body.dark app-profile .hero-meta,
+body.dark app-profile .hero-badge,
+body.dark app-profile .photo-actions,
+body.dark app-profile .upload-button,
+body.dark app-profile .secondary-button,
+body.dark app-profile .status-chip,
+body.dark app-profile .profile-stats .stat-card,
+body.dark app-profile .card-header,
+body.dark app-profile .form-group input,
+body.dark app-profile .form-group select,
+body.dark app-profile .form-group textarea,
+body.dark app-profile .profile-form,
+body.dark app-profile .loading-card {
+  background: #111827 !important;
+  color: #ffffff !important;
+  border-color: rgba(71, 85, 105, 0.45) !important;
+}
+
+body.dark app-profile .stat-card {
+  background: #1f2937 !important;
+  border-color: rgba(71, 85, 105, 0.4) !important;
+}
+
+body.dark app-profile .avatar-block {
+  background: linear-gradient(180deg, #0f172a, #1f2937) !important;
+}
+
+body.dark app-profile .hero-badge {
+  background: rgba(37, 99, 235, 0.16) !important;
+  color: #ffffff !important;
+}
+
+body.dark app-profile .secondary-button {
+  background: rgba(255, 255, 255, 0.08) !important;
+  color: #ffffff !important;
+  border-color: rgba(148, 163, 184, 0.38) !important;
+}
+
+body.dark app-profile .status-chip {
+  background: rgba(255, 255, 255, 0.08) !important;
+  color: #ffffff !important;
+}
+
+body.dark app-dashboard,
+body.dark app-traffic,
+body.dark app-parking,
+body.dark app-sensors,
+body.dark app-profile,
+body.dark app-login,
+body.dark app-register {
+  background-image: url('https://images.unsplash.com/photo-1512453979798-5ea266f8880c?auto=format&fit=crop&w=1400&q=80') !important;
+  background-size: cover !important;
+  background-position: center !important;
+  background-repeat: no-repeat !important;
+}
+
+.dashboard-shell {
+  background: rgba(255, 255, 255, 0.88);
+  border-radius: 2.5rem;
+  box-shadow: 0 40px 80px rgba(15, 23, 42, 0.12);
+  border: 1px solid rgba(148, 163, 184, 0.14);
+  backdrop-filter: blur(18px);
+}
+
+.dashboard-hero {
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.14), rgba(249, 250, 251, 0.96));
+  border-radius: 2rem;
+  padding: 2rem;
+  box-shadow: 0 28px 60px rgba(15, 23, 42, 0.1);
+  border: 1px solid rgba(148, 163, 184, 0.16);
+}
+
+.traffic-layout {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+}

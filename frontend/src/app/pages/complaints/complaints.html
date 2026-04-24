@@ -1,0 +1,86 @@
+<section class="complaints-shell">
+  <header class="complaints-hero">
+    <div>
+      <p class="eyebrow">Gestion des Plaintes</p>
+      <h1>Plaintes et Signalements <span class="complaint-count">{{ complaints.length }}</span></h1>
+      <p>Gérez toutes les plaintes des citoyens : classification, suivi et résolution.</p>
+    </div>
+    <div class="hero-meta">
+      <div class="status-pill">Actif</div>
+    </div>
+  </header>
+
+  <div *ngIf="error" class="error-message">
+    ❌ {{ error }}
+    <button (click)="testApiConnection()" style="margin-top: 10px; padding: 5px 10px; background: #007bff; color: white; border: none; border-radius: 4px;">Test API</button>
+  </div>
+
+  <div *ngIf="statusMessage && !error" class="status-message">
+    {{ statusMessage }}
+  </div>
+
+  <div *ngIf="!loading && !error && filteredComplaints.length === 0" class="empty-state">
+    Aucun signalement trouvé pour le moment.
+  </div>
+
+  <div class="complaints-grid" *ngIf="filteredComplaints.length > 0">
+    <div *ngFor="let complaint of filteredComplaints" class="complaint-card" [ngStyle]="{'border-left': '5px solid ' + getCategoryColor(complaint.category)}">
+      <div class="complaint-header">
+        <img *ngIf="getComplaintImage(complaint)" [src]="getComplaintImage(complaint)" alt="Image de la plainte" class="complaint-image" />
+        <div class="complaint-info">
+          <div *ngIf="complaint.user" class="citizen-badge">
+            <img *ngIf="getCitizenAvatar(complaint)" [src]="getCitizenAvatar(complaint)" alt="Photo du citoyen" class="citizen-avatar" />
+            <span class="citizen-name">👤 {{ complaint.user.first_name || complaint.user.name || complaint.user.email || 'Citoyen' }}</span>
+          </div>
+          <h3>{{ complaint.type_probleme }}</h3>
+          <p class="category-label">🏷️ {{ getCategoryLabel(complaint.category) }}</p>
+          <p class="location">📍 {{ complaint.latitude }}, {{ complaint.longitude }}</p>
+          <p *ngIf="getSeverityLabel(complaint)" class="severity-badge" [ngClass]="getSeverityLevel(complaint)">{{ getSeverityLabel(complaint) }}</p>
+          <p class="date">📅 {{ complaint.date }}</p>
+          <span class="status-badge" [ngClass]="complaint.status">{{ getStatusLabel(complaint.status) }}</span>
+        </div>
+      </div>
+
+      <div class="complaint-actions">
+        <div class="form-row">
+          <label>
+            Catégorie
+            <select [(ngModel)]="complaint.category">
+              <option value="éclairage">💡 Éclairage public</option>
+              <option value="infrastructure">🚧 Infrastructure</option>
+              <option value="trafic">🚗 Trafic</option>
+              <option value="parking">🅿️ Parking</option>
+              <option value="sensors">🌡️ Capteurs</option>
+              <option value="déchets">🗑️ Déchets</option>
+            </select>
+          </label>
+          <label>
+            Priorité
+            <select [(ngModel)]="complaint.priority">
+              <option value="low">🟢 Faible</option>
+              <option value="medium">🟡 Moyenne</option>
+              <option value="high">🔴 Haute</option>
+            </select>
+          </label>
+          <label>
+            Statut
+            <select [(ngModel)]="complaint.status" (ngModelChange)="onStatusChange(complaint)">
+              <option value="pending">⏳ En attente</option>
+              <option value="in_progress">🔄 En cours</option>
+              <option value="resolved">✅ Résolu</option>
+            </select>
+          </label>
+        </div>
+
+        <div *ngIf="complaint.status === 'resolved'" class="resolution-section">
+          <label>
+            Comment le problème a été résolu ?
+            <textarea [(ngModel)]="complaint.resolution" placeholder="Décrivez la résolution..."></textarea>
+          </label>
+        </div>
+
+        <button class="btn save" (click)="saveComplaint(complaint)">💾 Enregistrer</button>
+      </div>
+    </div>
+  </div>
+</section>

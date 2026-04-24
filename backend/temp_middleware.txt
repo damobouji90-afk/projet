@@ -1,0 +1,9 @@
+    ->withMiddleware(function (Middleware $middleware): void {
+        // CORS middleware only if it exists
+        $middleware->alias([
+            'role' => \App\Http\Middleware\RoleMiddleware::class,
+        ]);
+        if (class_exists('Fruitcake\Cors\HandleCors')) {
+            $middleware->append('Fruitcake\Cors\HandleCors');
+        }
+    })

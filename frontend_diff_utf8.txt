@@ -1,0 +1,1603 @@
+﻿diff --git a/frontend/angular.json b/frontend/angular.json
+index cde76a7..d0767cf 100644
+--- a/frontend/angular.json
++++ b/frontend/angular.json
+@@ -2,7 +2,8 @@
+   "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
+   "version": 1,
+   "cli": {
+-    "packageManager": "npm"
++    "packageManager": "npm",
++    "analytics": false
+   },
+   "newProjectRoot": "projects",
+   "projects": {
+@@ -27,17 +28,17 @@
+             "styles": [
+               "src/styles.css"
+             ],
+-            "server": "src/main.server.ts",
+-            "outputMode": "server",
+             "security": {
+               "allowedHosts": []
+-            },
+-            "ssr": {
+-              "entry": "src/server.ts"
+             }
+           },
+           "configurations": {
+             "production": {
++              "server": "src/main.server.ts",
++              "outputMode": "server",
++              "ssr": {
++                "entry": "src/server.ts"
++              },
+               "budgets": [
+                 {
+                   "type": "initial",
+diff --git a/frontend/src/app/app.config.ts b/frontend/src/app/app.config.ts
+index 797642e..681b4d3 100644
+--- a/frontend/src/app/app.config.ts
++++ b/frontend/src/app/app.config.ts
+@@ -1,5 +1,6 @@
+ import { ApplicationConfig, provideBrowserGlobalErrorListeners } from '@angular/core';
+ import { provideRouter } from '@angular/router';
++import { provideHttpClient } from '@angular/common/http';
+ 
+ import { routes } from './app.routes';
+ import { provideClientHydration, withEventReplay } from '@angular/platform-browser';
+@@ -7,6 +8,8 @@ import { provideClientHydration, withEventReplay } from '@angular/platform-brows
+ export const appConfig: ApplicationConfig = {
+   providers: [
+     provideBrowserGlobalErrorListeners(),
+-    provideRouter(routes), provideClientHydration(withEventReplay())
++    provideRouter(routes),
++    provideHttpClient(),
++    provideClientHydration(withEventReplay()),
+   ]
+ };
+diff --git a/frontend/src/app/app.css b/frontend/src/app/app.css
+index e69de29..0507547 100644
+--- a/frontend/src/app/app.css
++++ b/frontend/src/app/app.css
+@@ -0,0 +1,506 @@
++/* Global styles managed in app.html */
++
++.theme-toggle {
++  border: 1px solid rgba(148, 163, 184, 0.3);
++  background: #f8fafc;
++  color: #0f172a;
++  padding: 0.75rem 1rem;
++  border-radius: 999px;
++  cursor: pointer;
++  font-weight: 700;
++  transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
++}
++
++.theme-toggle:hover {
++  background: rgba(37, 99, 235, 0.08);
++}
++
++.user-card {
++  display: flex;
++  align-items: center;
++  gap: 0.75rem;
++  padding: 0.35rem 0.75rem;
++  border-radius: 999px;
++  background: rgba(255, 255, 255, 0.45);
++  border: 1px solid rgba(148, 163, 184, 0.18);
++}
++
++.user-avatar {
++  width: 2.5rem;
++  height: 2.5rem;
++  border-radius: 9999px;
++  overflow: hidden;
++  display: grid;
++  place-items: center;
++  background: #e2e8f0;
++  color: #1f2937;
++  font-weight: 700;
++  font-size: 0.95rem;
++}
++
++.user-avatar img {
++  width: 100%;
++  height: 100%;
++  object-fit: cover;
++}
++
++.user-meta {
++  display: flex;
++  flex-direction: column;
++  gap: 0.1rem;
++  line-height: 1.1;
++}
++
++.user-role {
++  font-size: 0.75rem;
++  color: #64748b;
++  text-transform: uppercase;
++  letter-spacing: 0.05em;
++}
++
++.user-name {
++  font-size: 0.95rem;
++  font-weight: 700;
++  color: #111827;
++}
++
++/* ===== LIGHT MODE (DEFAULT) ===== */
++
++:root.light,
++:root {
++  color-scheme: light;
++}
++
++html.light {
++  background-color: #ffffff !important;
++}
++
++body.light {
++  background-color: #ffffff !important;
++  color: #0f172a !important;
++}
++
++body.light .topnav {
++  background: rgba(255, 255, 255, 0.92) !important;
++  border-bottom: 1px solid rgba(148, 163, 184, 0.18) !important;
++  color: #0f172a !important;
++}
++
++body.light .topnav .brand {
++  color: #111827 !important;
++}
++
++body.light .topnav .menu a {
++  color: #475569 !important;
++}
++
++body.light .topnav .menu a.active,
++body.light .topnav .menu a:hover {
++  background: rgba(37, 99, 235, 0.08) !important;
++  color: #1d4ed8 !important;
++}
++
++body.light .logout-btn {
++  background: #2563eb !important;
++  color: white !important;
++}
++
++/* ===== DARK MODE ===== */
++
++:root.dark {
++  color-scheme: dark;
++}
++
++html.dark {
++  background-color: #0f172a !important;
++}
++
++body.dark {
++  background-color: #0f172a !important;
++  color: #e2e8f0 !important;
++}
++
++body.dark .topnav {
++  background: rgba(15, 23, 42, 0.98) !important;
++  border-bottom: 1px solid rgba(79, 102, 156, 0.2) !important;
++  color: #e2e8f0 !important;
++}
++
++body.dark .topnav .brand {
++  color: #ffffff !important;
++}
++
++body.dark .topnav .menu a {
++  color: #ffffff !important;
++}
++
++body.dark .user-card {
++  background: #111827 !important;
++  border-color: rgba(71, 85, 105, 0.4) !important;
++}
++
++body.dark .user-name {
++  color: #f8fafc;
++}
++
++body.dark .user-role {
++  color: #94a3b8;
++}
++
++body.dark .topnav .menu a.active,
++body.dark .topnav .menu a:hover {
++  background: rgba(37, 99, 235, 0.15) !important;
++  color: #fff !important;
++}
++
++body.dark .panel,
++body.dark .stat-card,
++body.dark .page-card,
++body.dark .dashboard-shell,
++body.dark .traffic-shell,
++body.dark .parking-shell,
++body.dark .sensors-shell,
++body.dark .page-shell,
++body.dark .auth-card,
++body.dark .parking-card,
++body.dark .sensor-item,
++body.dark .route-row,
++body.dark .selected-card,
++body.dark .empty-selection,
++body.dark .alert-card,
++body.dark .zone-card,
++body.dark .status-card,
++body.dark .traffic-card,
++body.dark .user-card {
++  background: #111827 !important;
++  border-color: rgba(71, 85, 105, 0.4) !important;
++  color: #ffffff !important;
++}
++
++body.dark .stat-card.blue { background: rgba(59, 130, 246, 0.1) !important; }
++body.dark .stat-card.cyan { background: rgba(6, 182, 212, 0.1) !important; }
++body.dark .stat-card.green { background: rgba(34, 197, 94, 0.1) !important; }
++body.dark .stat-card.violet { background: rgba(139, 92, 246, 0.1) !important; }
++
++body.dark .traffic-shell,
++body.dark .parking-shell,
++body.dark .dashboard-shell,
++body.dark .sensors-shell,
++body.dark .panel,
++body.dark .map-panel,
++body.dark .summary-panel,
++body.dark .parking-form,
++body.dark .traffic-form,
++body.dark .sensor-form,
++body.dark .stat-card,
++body.dark .page-card,
++body.dark .page-shell,
++body.dark .auth-card,
++body.dark .parking-card,
++body.dark .sensor-item,
++body.dark .route-row,
++body.dark .selected-card,
++body.dark .empty-selection,
++body.dark .alert-card,
++body.dark .zone-card,
++body.dark .status-card,
++body.dark .traffic-card,
++body.dark .user-card {
++  color: #ffffff !important;
++}
++
++body.dark .traffic-shell *,
++body.dark .parking-shell *,
++body.dark .dashboard-shell *,
++body.dark .sensors-shell * {
++  color: #ffffff !important;
++}
++
++/* ===== LIGHT MODE - CONTAINERS ===== */
++
++body.light .page-shell,
++body.light .parking-shell,
++body.light .traffic-shell,
++body.light .sensors-shell,
++body.light .dashboard-shell,
++body.light .page-card,
++body.light .auth-card,
++body.light .panel,
++body.light .stat-card,
++body.light .parking-hero,
++body.light .traffic-hero,
++body.light .sensors-hero,
++body.light .summary-panel,
++body.light .map-panel,
++body.light .parking-form,
++body.light .traffic-form,
++body.light .sensors-form {
++  background: white !important;
++  color: #0f172a !important;
++  border-color: rgba(148, 163, 184, 0.3) !important;
++}
++
++body.light .summary-card {
++  background: #f8fafc !important;
++  color: #0f172a !important;
++  border-color: rgba(148, 163, 184, 0.2) !important;
++}
++
++body.light h1,
++body.light h2,
++body.light h3,
++body.light h4,
++body.light h5,
++body.light h6 {
++  color: #111827 !important;
++}
++
++body.light p,
++body.light label,
++body.light span {
++  color: #475569 !important;
++}
++
++body.light input,
++body.light textarea,
++body.light select {
++  background: #f8fafc !important;
++  color: #0f172a !important;
++  border-color: #d1d5db !important;
++}
++
++body.light input::placeholder,
++body.light textarea::placeholder {
++  color: #9ca3af !important;
++}
++
++body.light button,
++body.light .btn {
++  background: #2563eb !important;
++  color: white !important;
++}
++
++body.light table {
++  background: white !important;
++  color: #0f172a !important;
++}
++
++body.light th {
++  background: #f8fafc !important;
++  color: #0f172a !important;
++}
++
++body.light td {
++  color: #0f172a !important;
++  border-color: #e5e7eb !important;
++}
++
++/* ===== DARK MODE - CONTAINERS ===== */
++
++body.dark .page-shell,
++body.dark .parking-shell,
++body.dark .traffic-shell,
++body.dark .sensors-shell,
++body.dark .dashboard-shell,
++body.dark .page-card,
++body.dark .auth-card,
++body.dark .panel,
++body.dark .stat-card,
++body.dark .parking-hero,
++body.dark .traffic-hero,
++body.dark .sensors-hero,
++body.dark .summary-panel,
++body.dark .map-panel,
++body.dark .parking-form,
++body.dark .traffic-form,
++body.dark .sensors-form,
++body.dark .card,
++body.dark .container,
++body.dark .box,
++body.dark .summary-card {
++  background: #111827 !important;
++  color: #e2e8f0 !important;
++  border-color: rgba(100, 116, 139, 0.3) !important;
++}
++
++body.dark .summary-card span {
++  color: #94a3b8 !important;
++}
++
++body.dark .summary-card strong {
++  color: #f1f5f9 !important;
++}
++
++body.dark h1,
++body.dark h2,
++body.dark h3,
++body.dark h4,
++body.dark h5,
++body.dark h6 {
++  color: #f1f5f9 !important;
++}
++
++body.dark p,
++body.dark label,
++body.dark span {
++  color: #ffffff !important;
++}
++
++body.dark .eyebrow {
++  color: #60a5fa !important;
++}
++
++body.dark .hero-meta {
++  background: #111827 !important;
++  border-color: rgba(71, 85, 105, 0.4) !important;
++}
++
++body.dark .hero-meta span {
++  color: #94a3b8 !important;
++}
++
++body.dark .hero-meta strong {
++  color: #e2e8f0 !important;
++}
++
++body.dark .status-pill {
++  background: #1f2937 !important;
++  color: #e2e8f0 !important;
++}
++
++body.dark input,
++body.dark textarea,
++body.dark select {
++  background: #0f172a !important;
++  color: #e2e8f0 !important;
++  border-color: #334155 !important;
++}
++
++body.dark input::placeholder,
++body.dark textarea::placeholder {
++  color: #64748b !important;
++}
++
++body.dark input:focus,
++body.dark textarea:focus,
++body.dark select:focus {
++  border-color: #2563eb !important;
++  background: #1e293b !important;
++  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1) !important;
++}
++
++body.dark button,
++body.dark .btn {
++  background: #2563eb !important;
++  color: white !important;
++}
++
++body.dark button:hover,
++body.dark .btn:hover {
++  background: #1d4ed8 !important;
++}
++
++body.dark .btn.cancel {
++  background: #ef4444 !important;
++}
++
++body.dark .btn.modify {
++  background: #f59e0b !important;
++}
++
++body.dark table {
++  background: #1e293b !important;
++  color: #e2e8f0 !important;
++}
++
++body.dark th {
++  background: #0f172a !important;
++  color: #94a3b8 !important;
++}
++
++body.dark td {
++  color: #cbd5e1 !important;
++  border-color: #334155 !important;
++}
++
++/* ===== MESSAGES ===== */
++
++body.dark .success-message {
++  background: rgba(34, 197, 94, 0.1) !important;
++  border-color: rgba(34, 197, 94, 0.3) !important;
++  color: #86efac !important;
++}
++
++body.dark .error-message {
++  background: rgba(239, 68, 68, 0.1) !important;
++  border-color: rgba(239, 68, 68, 0.3) !important;
++  color: #fca5a5 !important;
++}
++
++body.light .success-message {
++  background: rgba(34, 197, 94, 0.1) !important;
++  border-color: rgba(34, 197, 94, 0.3) !important;
++  color: #166534 !important;
++}
++
++body.light .error-message {
++  background: rgba(239, 68, 68, 0.1) !important;
++  border-color: rgba(239, 68, 68, 0.3) !important;
++  color: #b91c1c !important;
++}
++
++/* ===== LINKS ===== */
++
++body.light a {
++  color: #2563eb !important;
++}
++
++body.light a:hover {
++  color: #1d4ed8 !important;
++}
++
++body.dark a {
++  color: #60a5fa !important;
++}
++
++body.dark a:hover {
++  color: #93c5fd !important;
++}
++
++/* ===== MAPS ===== */
++
++body.dark .map-frame {
++  background: #0f172a !important;
++  border-color: #334155 !important;
++}
++
++body.light .map-frame {
++  background: #f8fafc !important;
++  border-color: #d1d5db !important;
++}
++
++/* ===== SCROLLBARS ===== */
++
++body.dark ::-webkit-scrollbar-track {
++  background: #0f172a;
++}
++
++body.dark ::-webkit-scrollbar-thumb {
++  background: #334155;
++}
++
++body.dark ::-webkit-scrollbar-thumb:hover {
++  background: #475569;
++}
++
++body.light ::-webkit-scrollbar-track {
++  background: #f8fafc;
++}
++
++body.light ::-webkit-scrollbar-thumb {
++  background: #cbd5e1;
++}
++
++body.light ::-webkit-scrollbar-thumb:hover {
++  background: #9ca3af;
++}
+diff --git a/frontend/src/app/app.html b/frontend/src/app/app.html
+index a1c4296..65a7189 100644
+--- a/frontend/src/app/app.html
++++ b/frontend/src/app/app.html
+@@ -1,344 +1,249 @@
+-<!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * -->
+-<!-- * * * * * * * * * * * The content below * * * * * * * * * * * -->
+-<!-- * * * * * * * * * * is only a placeholder * * * * * * * * * * -->
+-<!-- * * * * * * * * * * and can be replaced.  * * * * * * * * * * -->
+-<!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * -->
+-<!-- * * * * * * * * * Delete the template below * * * * * * * * * -->
+-<!-- * * * * * * * to get started with your project! * * * * * * * -->
+-<!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * -->
+-
+ <style>
+   :host {
+     --bright-blue: oklch(51.01% 0.274 263.83);
+     --electric-violet: oklch(53.18% 0.28 296.97);
+-    --french-violet: oklch(47.66% 0.246 305.88);
+-    --vivid-pink: oklch(69.02% 0.277 332.77);
+-    --hot-red: oklch(61.42% 0.238 15.34);
+-    --orange-red: oklch(63.32% 0.24 31.68);
+-
+     --gray-900: oklch(19.37% 0.006 300.98);
+     --gray-700: oklch(36.98% 0.014 302.71);
+-    --gray-400: oklch(70.9% 0.015 304.04);
+-
+-    --red-to-pink-to-purple-vertical-gradient: linear-gradient(
+-      180deg,
+-      var(--orange-red) 0%,
+-      var(--vivid-pink) 50%,
+-      var(--electric-violet) 100%
+-    );
+-
+-    --red-to-pink-to-purple-horizontal-gradient: linear-gradient(
+-      90deg,
+-      var(--orange-red) 0%,
+-      var(--vivid-pink) 50%,
+-      var(--electric-violet) 100%
+-    );
+-
+-    --pill-accent: var(--bright-blue);
+-
+-    font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+-      Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji",
+-      "Segoe UI Symbol";
++
++    font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+     box-sizing: border-box;
+     -webkit-font-smoothing: antialiased;
+     -moz-osx-font-smoothing: grayscale;
+-    display: block;
++    display: flex;
++    flex-direction: column;
+     height: 100dvh;
+   }
+ 
+-  h1 {
+-    font-size: 3.125rem;
+-    color: var(--gray-900);
+-    font-weight: 500;
+-    line-height: 100%;
+-    letter-spacing: -0.125rem;
+-    margin: 0;
+-    font-family: "Inter Tight", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+-      Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji",
+-      "Segoe UI Symbol";
++  .topnav {
++    display: flex;
++    justify-content: space-between;
++    align-items: center;
++    padding: 1rem 2rem;
++    background: rgba(255, 255, 255, 0.92);
++    border: 1px solid rgba(148, 163, 184, 0.18);
++    box-shadow: 0 18px 48px rgba(15, 23, 42, 0.08);
++    backdrop-filter: blur(20px);
++    position: sticky;
++    top: 0;
++    z-index: 20;
++    gap: 1rem;
+   }
+ 
+-  p {
+-    margin: 0;
+-    color: var(--gray-700);
++  .brand {
++    font-size: 1.25rem;
++    font-weight: 700;
+   }
+ 
+-  main {
+-    width: 100%;
+-    min-height: 100%;
++  .menu-container {
+     display: flex;
+-    justify-content: center;
++    gap: 1.5rem;
+     align-items: center;
+-    padding: 1rem;
+-    box-sizing: inherit;
+-    position: relative;
+   }
+ 
+-  .angular-logo {
+-    max-width: 9.2rem;
+-  }
+-
+-  .content {
++  .menu {
+     display: flex;
+-    justify-content: space-around;
+-    width: 100%;
+-    max-width: 700px;
+-    margin-bottom: 3rem;
++    gap: 1rem;
++    align-items: center;
++    list-style: none;
++    margin: 0;
++    padding: 0;
+   }
+ 
+-  .content h1 {
+-    margin-top: 1.75rem;
++  .menu a {
++    color: #475569;
++    text-decoration: none;
++    font-weight: 600;
++    padding: 0.65rem 1rem;
++    border-radius: 9999px;
++    transition: all 0.2s ease;
++    cursor: pointer;
+   }
+ 
+-  .content p {
+-    margin-top: 1.5rem;
++  .menu a:hover {
++    background: rgba(37, 99, 235, 0.08);
++    color: #1d4ed8;
+   }
+ 
+-  .divider {
+-    width: 1px;
+-    background: var(--red-to-pink-to-purple-vertical-gradient);
+-    margin-inline: 0.5rem;
++  .menu a.active {
++    background: rgba(37, 99, 235, 0.12);
++    color: #1d4ed8;
++    box-shadow: inset 0 0 0 1px rgba(37, 99, 235, 0.16);
+   }
+ 
+-  .pill-group {
++  .auth-buttons {
+     display: flex;
+-    flex-direction: column;
+-    align-items: start;
+-    flex-wrap: wrap;
+-    gap: 1.25rem;
++    gap: 1rem;
++    align-items: center;
+   }
+ 
+-  .pill {
+-    display: flex;
+-    align-items: center;
+-    --pill-accent: var(--bright-blue);
+-    background: color-mix(in srgb, var(--pill-accent) 5%, transparent);
+-    color: var(--pill-accent);
+-    padding-inline: 0.75rem;
+-    padding-block: 0.375rem;
+-    border-radius: 2.75rem;
+-    border: 0;
+-    transition: background 0.3s ease;
+-    font-family: var(--inter-font);
+-    font-size: 0.875rem;
+-    font-style: normal;
+-    font-weight: 500;
+-    line-height: 1.4rem;
+-    letter-spacing: -0.00875rem;
++  .auth-buttons a,
++  .logout-btn {
++    padding: 0.65rem 1rem;
++    border-radius: 9999px;
+     text-decoration: none;
+-    white-space: nowrap;
++    font-weight: 600;
++    font-size: 0.95rem;
++    cursor: pointer;
++    border: 1px solid transparent;
++    transition: all 0.2s ease;
+   }
+ 
+-  .pill:hover {
+-    background: color-mix(in srgb, var(--pill-accent) 15%, transparent);
++  .logout-btn {
++    background: #2563eb;
++    color: #fff;
++    border-color: transparent;
+   }
+ 
+-  .pill-group .pill:nth-child(6n + 1) {
+-    --pill-accent: var(--bright-blue);
++  .logout-btn:hover,
++  .auth-buttons a:hover {
++    transform: translateY(-1px);
+   }
+-  .pill-group .pill:nth-child(6n + 2) {
+-    --pill-accent: var(--electric-violet);
++
++  .login-link {
++    color: #2563eb;
++    background: rgba(37, 99, 235, 0.08);
+   }
+-  .pill-group .pill:nth-child(6n + 3) {
+-    --pill-accent: var(--french-violet);
++
++  .login-link:hover {
++    background: rgba(37, 99, 235, 0.14);
+   }
+ 
+-  .pill-group .pill:nth-child(6n + 4),
+-  .pill-group .pill:nth-child(6n + 5),
+-  .pill-group .pill:nth-child(6n + 6) {
+-    --pill-accent: var(--hot-red);
++  .register-link {
++    background: #2563eb;
++    color: white;
+   }
+ 
+-  .pill-group svg {
+-    margin-inline-start: 0.25rem;
++  .register-link:hover {
++    background: #1d4ed8;
+   }
+ 
+-  .social-links {
+-    display: flex;
+-    align-items: center;
+-    gap: 0.73rem;
+-    margin-top: 1.5rem;
++  main {
++    flex: 1;
++    overflow-y: auto;
++    width: 100%;
+   }
+ 
+-  .social-links path {
+-    transition: fill 0.3s ease;
+-    fill: var(--gray-400);
++  /* ===== DARK MODE STYLES IN APP.HTML ===== */
++  body.dark .topnav {
++    background: rgba(15, 23, 42, 0.95);
++    border: 1px solid rgba(79, 102, 156, 0.2);
++    box-shadow: 0 18px 48px rgba(0, 0, 0, 0.5);
+   }
+ 
+-  .social-links a:hover svg path {
+-    fill: var(--gray-900);
++  body.dark .brand {
++    color: #f1f5f9;
+   }
+ 
+-  @media screen and (max-width: 650px) {
+-    .content {
+-      flex-direction: column;
+-      width: max-content;
++  body.dark .menu a {
++    color: #cbd5e1;
++  }
++
++  body.dark .menu a:hover {
++    background: rgba(37, 99, 235, 0.15);
++    color: #93c5fd;
++  }
++
++  body.dark .menu a.active {
++    background: rgba(37, 99, 235, 0.15);
++    color: #93c5fd;
++  }
++
++  body.dark .logout-btn {
++    background: #2563eb;
++    color: white;
++  }
++
++  body.dark .logout-btn:hover {
++    background: #1d4ed8;
++  }
++
++  body.dark .login-link {
++    color: #60a5fa;
++    background: rgba(37, 99, 235, 0.1);
++  }
++
++  body.dark .register-link {
++    background: #2563eb;
++    color: white;
++  }
++
++  body.dark main {
++    background: #0f172a;
++  }
++
++  @media screen and (max-width: 768px) {
++    .topnav {
++      flex-wrap: wrap;
++      padding: 1rem;
++    }
++
++    .menu-container {
++      width: 100%;
++      flex-wrap: wrap;
++    }
++
++    .menu {
++      width: 100%;
++      gap: 0.75rem;
++      order: 2;
+     }
+ 
+-    .divider {
+-      height: 1px;
++    .auth-buttons {
+       width: 100%;
+-      background: var(--red-to-pink-to-purple-horizontal-gradient);
+-      margin-block: 1.5rem;
++      border-left: none;
++      border-top: 1px solid #ddd;
++      padding-left: 0;
++      padding-top: 1rem;
++      margin-left: 0;
++      order: 3;
+     }
+   }
+ </style>
+ 
+-<main class="main">
+-  <div class="content">
+-    <div class="left-side">
+-      <svg
+-        xmlns="http://www.w3.org/2000/svg"
+-        viewBox="0 0 982 239"
+-        fill="none"
+-        class="angular-logo"
+-      >
+-        <g clip-path="url(#a)">
+-          <path
+-            fill="url(#b)"
+-            d="M388.676 191.625h30.849L363.31 31.828h-35.758l-56.215 159.797h30.848l13.174-39.356h60.061l13.256 39.356Zm-65.461-62.675 21.602-64.311h1.227l21.602 64.311h-44.431Zm126.831-7.527v70.202h-28.23V71.839h27.002v20.374h1.392c2.782-6.71 7.2-12.028 13.255-15.956 6.056-3.927 13.584-5.89 22.503-5.89 8.264 0 15.465 1.8 21.684 5.318 6.137 3.518 10.964 8.673 14.319 15.382 3.437 6.71 5.074 14.81 4.992 24.383v76.175h-28.23v-71.92c0-8.019-2.046-14.237-6.219-18.819-4.173-4.5-9.819-6.791-17.102-6.791-4.91 0-9.328 1.063-13.174 3.272-3.846 2.128-6.792 5.237-9.001 9.328-2.046 4.009-3.191 8.918-3.191 14.728ZM589.233 239c-10.147 0-18.82-1.391-26.103-4.091-7.282-2.7-13.092-6.382-17.511-10.964-4.418-4.582-7.528-9.655-9.164-15.219l25.448-6.136c1.145 2.372 2.782 4.663 4.991 6.954 2.209 2.291 5.155 4.255 8.837 5.81 3.683 1.554 8.428 2.291 14.074 2.291 8.019 0 14.647-1.964 19.884-5.81 5.237-3.845 7.856-10.227 7.856-19.064v-22.665h-1.391c-1.473 2.946-3.601 5.892-6.383 9.001-2.782 3.109-6.464 5.645-10.965 7.691-4.582 2.046-10.228 3.109-17.101 3.109-9.165 0-17.511-2.209-25.039-6.545-7.446-4.337-13.42-10.883-17.757-19.474-4.418-8.673-6.628-19.473-6.628-32.565 0-13.091 2.21-24.301 6.628-33.383 4.419-9.082 10.311-15.955 17.839-20.7 7.528-4.746 15.874-7.037 25.039-7.037 7.037 0 12.846 1.145 17.347 3.518 4.582 2.373 8.182 5.236 10.883 8.51 2.7 3.272 4.746 6.382 6.137 9.327h1.554v-19.8h27.821v121.749c0 10.228-2.454 18.737-7.364 25.447-4.91 6.709-11.538 11.7-20.048 15.055-8.509 3.355-18.165 4.991-28.884 4.991Zm.245-71.266c5.974 0 11.047-1.473 15.302-4.337 4.173-2.945 7.446-7.118 9.573-12.519 2.21-5.482 3.274-12.027 3.274-19.637 0-7.609-1.064-14.155-3.274-19.8-2.127-5.646-5.318-10.064-9.491-13.255-4.174-3.11-9.329-4.746-15.384-4.746s-11.537 1.636-15.792 4.91c-4.173 3.272-7.365 7.772-9.492 13.418-2.128 5.727-3.191 12.191-3.191 19.392 0 7.2 1.063 13.745 3.273 19.228 2.127 5.482 5.318 9.736 9.573 12.764 4.174 3.027 9.41 4.582 15.629 4.582Zm141.56-26.51V71.839h28.23v119.786h-27.412v-21.273h-1.227c-2.7 6.709-7.119 12.191-13.338 16.446-6.137 4.255-13.747 6.382-22.748 6.382-7.855 0-14.81-1.718-20.783-5.237-5.974-3.518-10.72-8.591-14.075-15.382-3.355-6.709-5.073-14.891-5.073-24.464V71.839h28.312v71.921c0 7.609 2.046 13.664 6.219 18.083 4.173 4.5 9.655 6.709 16.365 6.709 4.173 0 8.183-.982 12.111-3.028 3.927-2.045 7.118-5.072 9.655-9.082 2.537-4.091 3.764-9.164 3.764-15.218Zm65.707-109.395v159.796h-28.23V31.828h28.23Zm44.841 162.169c-7.61 0-14.402-1.391-20.457-4.091-6.055-2.7-10.883-6.791-14.32-12.109-3.518-5.319-5.237-11.946-5.237-19.801 0-6.791 1.228-12.355 3.765-16.773 2.536-4.419 5.891-7.937 10.228-10.637 4.337-2.618 9.164-4.664 14.647-6.055 5.4-1.391 11.046-2.373 16.856-3.027 7.037-.737 12.683-1.391 17.102-1.964 4.337-.573 7.528-1.555 9.574-2.782 1.963-1.309 3.027-3.273 3.027-5.973v-.491c0-5.891-1.718-10.391-5.237-13.664-3.518-3.191-8.51-4.828-15.056-4.828-6.955 0-12.356 1.473-16.447 4.5-4.009 3.028-6.71 6.546-8.183 10.719l-26.348-3.764c2.046-7.282 5.483-13.336 10.31-18.328 4.746-4.909 10.638-8.59 17.511-11.045 6.955-2.455 14.565-3.682 22.912-3.682 5.809 0 11.537.654 17.265 2.045s10.965 3.6 15.711 6.71c4.746 3.109 8.51 7.282 11.455 12.6 2.864 5.318 4.337 11.946 4.337 19.883v80.184h-27.166v-16.446h-.9c-1.719 3.355-4.092 6.464-7.201 9.328-3.109 2.864-6.955 5.237-11.619 6.955-4.828 1.718-10.229 2.536-16.529 2.536Zm7.364-20.701c5.646 0 10.556-1.145 14.729-3.354 4.173-2.291 7.364-5.237 9.655-9.001 2.292-3.763 3.355-7.854 3.355-12.273v-14.155c-.9.737-2.373 1.391-4.5 2.046-2.128.654-4.419 1.145-7.037 1.636-2.619.491-5.155.9-7.692 1.227-2.537.328-4.746.655-6.628.901-4.173.572-8.019 1.472-11.292 2.781-3.355 1.31-5.973 3.11-7.855 5.401-1.964 2.291-2.864 5.318-2.864 8.918 0 5.237 1.882 9.164 5.728 11.782 3.682 2.782 8.51 4.091 14.401 4.091Zm64.643 18.328V71.839h27.412v19.965h1.227c2.21-6.955 5.974-12.274 11.292-16.038 5.319-3.763 11.456-5.645 18.329-5.645 1.555 0 3.355.082 5.237.163 1.964.164 3.601.328 4.91.573v25.938c-1.227-.41-3.109-.819-5.646-1.146a58.814 58.814 0 0 0-7.446-.49c-5.155 0-9.738 1.145-13.829 3.354-4.091 2.209-7.282 5.236-9.655 9.164-2.373 3.927-3.519 8.427-3.519 13.5v70.448h-28.312ZM222.077 39.192l-8.019 125.923L137.387 0l84.69 39.192Zm-53.105 162.825-57.933 33.056-57.934-33.056 11.783-28.556h92.301l11.783 28.556ZM111.039 62.675l30.357 73.803H80.681l30.358-73.803ZM7.937 165.115 0 39.192 84.69 0 7.937 165.115Z"
+-          />
+-          <path
+-            fill="url(#c)"
+-            d="M388.676 191.625h30.849L363.31 31.828h-35.758l-56.215 159.797h30.848l13.174-39.356h60.061l13.256 39.356Zm-65.461-62.675 21.602-64.311h1.227l21.602 64.311h-44.431Zm126.831-7.527v70.202h-28.23V71.839h27.002v20.374h1.392c2.782-6.71 7.2-12.028 13.255-15.956 6.056-3.927 13.584-5.89 22.503-5.89 8.264 0 15.465 1.8 21.684 5.318 6.137 3.518 10.964 8.673 14.319 15.382 3.437 6.71 5.074 14.81 4.992 24.383v76.175h-28.23v-71.92c0-8.019-2.046-14.237-6.219-18.819-4.173-4.5-9.819-6.791-17.102-6.791-4.91 0-9.328 1.063-13.174 3.272-3.846 2.128-6.792 5.237-9.001 9.328-2.046 4.009-3.191 8.918-3.191 14.728ZM589.233 239c-10.147 0-18.82-1.391-26.103-4.091-7.282-2.7-13.092-6.382-17.511-10.964-4.418-4.582-7.528-9.655-9.164-15.219l25.448-6.136c1.145 2.372 2.782 4.663 4.991 6.954 2.209 2.291 5.155 4.255 8.837 5.81 3.683 1.554 8.428 2.291 14.074 2.291 8.019 0 14.647-1.964 19.884-5.81 5.237-3.845 7.856-10.227 7.856-19.064v-22.665h-1.391c-1.473 2.946-3.601 5.892-6.383 9.001-2.782 3.109-6.464 5.645-10.965 7.691-4.582 2.046-10.228 3.109-17.101 3.109-9.165 0-17.511-2.209-25.039-6.545-7.446-4.337-13.42-10.883-17.757-19.474-4.418-8.673-6.628-19.473-6.628-32.565 0-13.091 2.21-24.301 6.628-33.383 4.419-9.082 10.311-15.955 17.839-20.7 7.528-4.746 15.874-7.037 25.039-7.037 7.037 0 12.846 1.145 17.347 3.518 4.582 2.373 8.182 5.236 10.883 8.51 2.7 3.272 4.746 6.382 6.137 9.327h1.554v-19.8h27.821v121.749c0 10.228-2.454 18.737-7.364 25.447-4.91 6.709-11.538 11.7-20.048 15.055-8.509 3.355-18.165 4.991-28.884 4.991Zm.245-71.266c5.974 0 11.047-1.473 15.302-4.337 4.173-2.945 7.446-7.118 9.573-12.519 2.21-5.482 3.274-12.027 3.274-19.637 0-7.609-1.064-14.155-3.274-19.8-2.127-5.646-5.318-10.064-9.491-13.255-4.174-3.11-9.329-4.746-15.384-4.746s-11.537 1.636-15.792 4.91c-4.173 3.272-7.365 7.772-9.492 13.418-2.128 5.727-3.191 12.191-3.191 19.392 0 7.2 1.063 13.745 3.273 19.228 2.127 5.482 5.318 9.736 9.573 12.764 4.174 3.027 9.41 4.582 15.629 4.582Zm141.56-26.51V71.839h28.23v119.786h-27.412v-21.273h-1.227c-2.7 6.709-7.119 12.191-13.338 16.446-6.137 4.255-13.747 6.382-22.748 6.382-7.855 0-14.81-1.718-20.783-5.237-5.974-3.518-10.72-8.591-14.075-15.382-3.355-6.709-5.073-14.891-5.073-24.464V71.839h28.312v71.921c0 7.609 2.046 13.664 6.219 18.083 4.173 4.5 9.655 6.709 16.365 6.709 4.173 0 8.183-.982 12.111-3.028 3.927-2.045 7.118-5.072 9.655-9.082 2.537-4.091 3.764-9.164 3.764-15.218Zm65.707-109.395v159.796h-28.23V31.828h28.23Zm44.841 162.169c-7.61 0-14.402-1.391-20.457-4.091-6.055-2.7-10.883-6.791-14.32-12.109-3.518-5.319-5.237-11.946-5.237-19.801 0-6.791 1.228-12.355 3.765-16.773 2.536-4.419 5.891-7.937 10.228-10.637 4.337-2.618 9.164-4.664 14.647-6.055 5.4-1.391 11.046-2.373 16.856-3.027 7.037-.737 12.683-1.391 17.102-1.964 4.337-.573 7.528-1.555 9.574-2.782 1.963-1.309 3.027-3.273 3.027-5.973v-.491c0-5.891-1.718-10.391-5.237-13.664-3.518-3.191-8.51-4.828-15.056-4.828-6.955 0-12.356 1.473-16.447 4.5-4.009 3.028-6.71 6.546-8.183 10.719l-26.348-3.764c2.046-7.282 5.483-13.336 10.31-18.328 4.746-4.909 10.638-8.59 17.511-11.045 6.955-2.455 14.565-3.682 22.912-3.682 5.809 0 11.537.654 17.265 2.045s10.965 3.6 15.711 6.71c4.746 3.109 8.51 7.282 11.455 12.6 2.864 5.318 4.337 11.946 4.337 19.883v80.184h-27.166v-16.446h-.9c-1.719 3.355-4.092 6.464-7.201 9.328-3.109 2.864-6.955 5.237-11.619 6.955-4.828 1.718-10.229 2.536-16.529 2.536Zm7.364-20.701c5.646 0 10.556-1.145 14.729-3.354 4.173-2.291 7.364-5.237 9.655-9.001 2.292-3.763 3.355-7.854 3.355-12.273v-14.155c-.9.737-2.373 1.391-4.5 2.046-2.128.654-4.419 1.145-7.037 1.636-2.619.491-5.155.9-7.692 1.227-2.537.328-4.746.655-6.628.901-4.173.572-8.019 1.472-11.292 2.781-3.355 1.31-5.973 3.11-7.855 5.401-1.964 2.291-2.864 5.318-2.864 8.918 0 5.237 1.882 9.164 5.728 11.782 3.682 2.782 8.51 4.091 14.401 4.091Zm64.643 18.328V71.839h27.412v19.965h1.227c2.21-6.955 5.974-12.274 11.292-16.038 5.319-3.763 11.456-5.645 18.329-5.645 1.555 0 3.355.082 5.237.163 1.964.164 3.601.328 4.91.573v25.938c-1.227-.41-3.109-.819-5.646-1.146a58.814 58.814 0 0 0-7.446-.49c-5.155 0-9.738 1.145-13.829 3.354-4.091 2.209-7.282 5.236-9.655 9.164-2.373 3.927-3.519 8.427-3.519 13.5v70.448h-28.312ZM222.077 39.192l-8.019 125.923L137.387 0l84.69 39.192Zm-53.105 162.825-57.933 33.056-57.934-33.056 11.783-28.556h92.301l11.783 28.556ZM111.039 62.675l30.357 73.803H80.681l30.358-73.803ZM7.937 165.115 0 39.192 84.69 0 7.937 165.115Z"
+-          />
+-        </g>
+-        <defs>
+-          <radialGradient
+-            id="c"
+-            cx="0"
+-            cy="0"
+-            r="1"
+-            gradientTransform="rotate(118.122 171.182 60.81) scale(205.794)"
+-            gradientUnits="userSpaceOnUse"
+-          >
+-            <stop stop-color="#FF41F8" />
+-            <stop offset=".707" stop-color="#FF41F8" stop-opacity=".5" />
+-            <stop offset="1" stop-color="#FF41F8" stop-opacity="0" />
+-          </radialGradient>
+-          <linearGradient
+-            id="b"
+-            x1="0"
+-            x2="982"
+-            y1="192"
+-            y2="192"
+-            gradientUnits="userSpaceOnUse"
+-          >
+-            <stop stop-color="#F0060B" />
+-            <stop offset="0" stop-color="#F0070C" />
+-            <stop offset=".526" stop-color="#CC26D5" />
+-            <stop offset="1" stop-color="#7702FF" />
+-          </linearGradient>
+-          <clipPath id="a"><path fill="#fff" d="M0 0h982v239H0z" /></clipPath>
+-        </defs>
+-      </svg>
+-      <h1>Hello, {{ title() }}</h1>
+-      <p>Congratulations! Your app is running. ­ƒÄë</p>
++<div class="topnav" *ngIf="authService.authState()">
++  <div class="brand">Smart City</div>
++  <div class="user-card">
++    <div class="user-avatar" *ngIf="avatarUrl(); else avatarPlaceholder">
++      <img [src]="avatarUrl()" alt="User avatar" />
+     </div>
+-    <div class="divider" role="separator" aria-label="Divider"></div>
+-    <div class="right-side">
+-      <div class="pill-group">
+-        @for (item of [
+-          { title: 'Explore the Docs', link: 'https://angular.dev' },
+-          { title: 'Learn with Tutorials', link: 'https://angular.dev/tutorials' },
+-          { title: 'Prompt and best practices for AI', link: 'https://angular.dev/ai/develop-with-ai'},
+-          { title: 'CLI Docs', link: 'https://angular.dev/tools/cli' },
+-          { title: 'Angular Language Service', link: 'https://angular.dev/tools/language-service' },
+-          { title: 'Angular DevTools', link: 'https://angular.dev/tools/devtools' },
+-        ]; track item.title) {
+-          <a
+-            class="pill"
+-            [href]="item.link"
+-            target="_blank"
+-            rel="noopener"
+-          >
+-            <span>{{ item.title }}</span>
+-            <svg
+-              xmlns="http://www.w3.org/2000/svg"
+-              height="14"
+-              viewBox="0 -960 960 960"
+-              width="14"
+-              fill="currentColor"
+-            >
+-              <path
+-                d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h280v80H200v560h560v-280h80v280q0 33-23.5 56.5T760-120H200Zm188-212-56-56 372-372H560v-80h280v280h-80v-144L388-332Z"
+-              />
+-            </svg>
+-          </a>
+-        }
+-      </div>
+-      <div class="social-links">
+-        <a
+-          href="https://github.com/angular/angular"
+-          aria-label="Github"
+-          target="_blank"
+-          rel="noopener"
+-        >
+-          <svg
+-            width="25"
+-            height="24"
+-            viewBox="0 0 25 24"
+-            fill="none"
+-            xmlns="http://www.w3.org/2000/svg"
+-            alt="Github"
+-          >
+-            <path
+-              d="M12.3047 0C5.50634 0 0 5.50942 0 12.3047C0 17.7423 3.52529 22.3535 8.41332 23.9787C9.02856 24.0946 9.25414 23.7142 9.25414 23.3871C9.25414 23.0949 9.24389 22.3207 9.23876 21.2953C5.81601 22.0377 5.09414 19.6444 5.09414 19.6444C4.53427 18.2243 3.72524 17.8449 3.72524 17.8449C2.61064 17.082 3.81137 17.0973 3.81137 17.0973C5.04697 17.1835 5.69604 18.3647 5.69604 18.3647C6.79321 20.2463 8.57636 19.7029 9.27978 19.3881C9.39052 18.5924 9.70736 18.0499 10.0591 17.7423C7.32641 17.4347 4.45429 16.3765 4.45429 11.6618C4.45429 10.3185 4.9311 9.22133 5.72065 8.36C5.58222 8.04931 5.16694 6.79833 5.82831 5.10337C5.82831 5.10337 6.85883 4.77319 9.2121 6.36459C10.1965 6.09082 11.2424 5.95546 12.2883 5.94931C13.3342 5.95546 14.3801 6.09082 15.3644 6.36459C17.7023 4.77319 18.7328 5.10337 18.7328 5.10337C19.3942 6.79833 18.9789 8.04931 18.8559 8.36C19.6403 9.22133 20.1171 10.3185 20.1171 11.6618C20.1171 16.3888 17.2409 17.4296 14.5031 17.7321C14.9338 18.1012 15.3337 18.8559 15.3337 20.0084C15.3337 21.6552 15.3183 22.978 15.3183 23.3779C15.3183 23.7009 15.5336 24.0854 16.1642 23.9623C21.0871 22.3484 24.6094 17.7341 24.6094 12.3047C24.6094 5.50942 19.0999 0 12.3047 0Z"
+-            />
+-          </svg>
+-        </a>
+-        <a
+-          href="https://x.com/angular"
+-          aria-label="X"
+-          target="_blank"
+-          rel="noopener"
+-        >
+-          <svg
+-            width="24"
+-            height="24"
+-            viewBox="0 0 24 24"
+-            fill="none"
+-            xmlns="http://www.w3.org/2000/svg"
+-            alt="X"
+-          >
+-            <path
+-              d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"
+-            />
+-          </svg>
+-        </a>
+-        <a
+-          href="https://www.youtube.com/channel/UCbn1OgGei-DV7aSRo_HaAiw"
+-          aria-label="Youtube"
+-          target="_blank"
+-          rel="noopener"
+-        >
+-          <svg
+-            width="29"
+-            height="20"
+-            viewBox="0 0 29 20"
+-            fill="none"
+-            xmlns="http://www.w3.org/2000/svg"
+-            alt="Youtube"
+-          >
+-            <path
+-              fill-rule="evenodd"
+-              clip-rule="evenodd"
+-              d="M27.4896 1.52422C27.9301 1.96749 28.2463 2.51866 28.4068 3.12258C29.0004 5.35161 29.0004 10 29.0004 10C29.0004 10 29.0004 14.6484 28.4068 16.8774C28.2463 17.4813 27.9301 18.0325 27.4896 18.4758C27.0492 18.9191 26.5 19.2389 25.8972 19.4032C23.6778 20 14.8068 20 14.8068 20C14.8068 20 5.93586 20 3.71651 19.4032C3.11363 19.2389 2.56449 18.9191 2.12405 18.4758C1.68361 18.0325 1.36732 17.4813 1.20683 16.8774C0.613281 14.6484 0.613281 10 0.613281 10C0.613281 10 0.613281 5.35161 1.20683 3.12258C1.36732 2.51866 1.68361 1.96749 2.12405 1.52422C2.56449 1.08095 3.11363 0.76113 3.71651 0.596774C5.93586 0 14.8068 0 14.8068 0C14.8068 0 23.6778 0 25.8972 0.596774C26.5 0.76113 27.0492 1.08095 27.4896 1.52422ZM19.3229 10L11.9036 5.77905V14.221L19.3229 10Z"
+-            />
+-          </svg>
+-        </a>
+-      </div>
++    <ng-template #avatarPlaceholder>
++      <div class="user-avatar placeholder">A</div>
++    </ng-template>
++    <div class="user-meta">
++      <span class="user-role">Admin</span>
++      <span class="user-name">{{ userName() }}</span>
+     </div>
+   </div>
+-</main>
+-
+-<!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * -->
+-<!-- * * * * * * * * * * * The content above * * * * * * * * * * * * -->
+-<!-- * * * * * * * * * * is only a placeholder * * * * * * * * * * * -->
+-<!-- * * * * * * * * * * and can be replaced.  * * * * * * * * * * * -->
+-<!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * -->
+-<!-- * * * * * * * * * * End of Placeholder  * * * * * * * * * * * * -->
+-<!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * -->
++  <div class="menu-container">
++      <nav class="menu">
++      <a routerLink="/dashboard" routerLinkActive="active">Home</a>
++      <a routerLink="/sensors" routerLinkActive="active">Sensors</a>
++      <a routerLink="/traffic" routerLinkActive="active">Traffic</a>
++      <a routerLink="/parking" routerLinkActive="active">Parking</a>
++      <a routerLink="/profile" routerLinkActive="active">Profile</a>
++    </nav>
++
++    <div class="auth-buttons">
++      <button type="button" class="theme-toggle" (click)="toggleDarkMode()">
++        {{ themeService.darkMode() ? 'ÔÿÇ´©Å Light' : '­ƒîÖ Dark' }}
++      </button>
++      <button (click)="logout()" class="logout-btn">Logout</button>
++    </div>
++  </div>
++</div>
++
++<div class="topnav" *ngIf="!authService.authState()">
++  <div class="brand">Smart City</div>
++  <div class="auth-buttons">
++    <a routerLink="/login" class="login-link">Se connecter</a>
++    <a routerLink="/register" class="register-link">S'inscrire</a>
++    <button type="button" class="theme-toggle" (click)="toggleDarkMode()">
++      {{ themeService.darkMode() ? 'ÔÿÇ´©Å Light' : '­ƒîÖ Dark' }}
++    </button>
++  </div>
++</div>
+ 
++<main>
++  <router-outlet></router-outlet>
++</main>
+ 
+-<router-outlet />
+diff --git a/frontend/src/app/app.routes.ts b/frontend/src/app/app.routes.ts
+index dc39edb..696a9f0 100644
+--- a/frontend/src/app/app.routes.ts
++++ b/frontend/src/app/app.routes.ts
+@@ -1,3 +1,20 @@
+ import { Routes } from '@angular/router';
++import { LoginComponent } from './pages/login/login.component';
++import { RegisterComponent } from './pages/register/register.component';
++import { DashboardComponent } from './pages/dashboard/dashboard.component';
++import { ParkingComponent } from './pages/parking/parking.component';
++import { TrafficComponent } from './pages/traffic/traffic.component';
++import { SensorsComponent } from './pages/sensors/sensors.component';
++import { ProfileComponent } from './pages/profile/profile.component';
++import { AuthGuard } from './guards/auth.guard';
+ 
+-export const routes: Routes = [];
++export const routes: Routes = [
++  { path: '', redirectTo: '/dashboard', pathMatch: 'full' },
++  { path: 'login', component: LoginComponent },
++  { path: 'register', component: RegisterComponent },
++  { path: 'dashboard', component: DashboardComponent, canActivate: [AuthGuard] },
++  { path: 'parking', component: ParkingComponent, canActivate: [AuthGuard] },
++  { path: 'traffic', component: TrafficComponent, canActivate: [AuthGuard] },
++  { path: 'sensors', component: SensorsComponent, canActivate: [AuthGuard] },
++  { path: 'profile', component: ProfileComponent, canActivate: [AuthGuard] },
++];
+diff --git a/frontend/src/app/app.ts b/frontend/src/app/app.ts
+index ade0fcb..799ba23 100644
+--- a/frontend/src/app/app.ts
++++ b/frontend/src/app/app.ts
+@@ -1,12 +1,68 @@
+-import { Component, signal } from '@angular/core';
+-import { RouterOutlet } from '@angular/router';
++import { Component, OnInit, effect, signal, inject } from '@angular/core';
++import { Router, RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
++import { CommonModule } from '@angular/common';
++import { AuthService } from './services/auth.service';
++import { ThemeService } from './services/theme.service';
+ 
+ @Component({
+   selector: 'app-root',
+-  imports: [RouterOutlet],
++  standalone: true,
++  imports: [RouterOutlet, RouterLink, RouterLinkActive, CommonModule],
+   templateUrl: './app.html',
+-  styleUrl: './app.css'
++  styleUrls: ['./app.css']
+ })
+-export class App {
++export class App implements OnInit {
+   protected readonly title = signal('frontend');
++  protected readonly authService = inject(AuthService);
++  protected readonly themeService = inject(ThemeService);
++  protected readonly userName = signal('Admin');
++  protected readonly avatarUrl = signal<string | null>(null);
++  private readonly router = inject(Router);
++
++  ngOnInit(): void {
++    this.checkAuthAndLoadUser();
++
++    effect(() => {
++      if (this.authService.authState()) {
++        this.loadUserInfo();
++      }
++    });
++  }
++
++  private checkAuthAndLoadUser(): void {
++    if (this.authService.isAuthenticated()) {
++      this.loadUserInfo();
++    }
++  }
++
++  private loadUserInfo(): void {
++    if (typeof window !== 'undefined') {
++      const storedAvatar = localStorage.getItem('smartcity_avatar');
++      if (storedAvatar) {
++        this.avatarUrl.set(storedAvatar);
++      }
++    }
++
++    this.authService.fetchUser().subscribe({
++      next: (user) => {
++        if (user?.name) {
++          this.userName.set(user.name);
++        }
++      },
++      error: () => {
++        this.userName.set('Admin');
++      }
++    });
++  }
++
++  toggleDarkMode(): void {
++    this.themeService.toggleDarkMode();
++  }
++
++  logout(): void {
++    this.authService.logout();
++    this.userName.set('Admin');
++    this.avatarUrl.set(null);
++    this.router.navigate(['/login']);
++  }
+ }
+diff --git a/frontend/src/main.ts b/frontend/src/main.ts
+index 5df75f9..d3f426a 100644
+--- a/frontend/src/main.ts
++++ b/frontend/src/main.ts
+@@ -2,5 +2,22 @@ import { bootstrapApplication } from '@angular/platform-browser';
+ import { appConfig } from './app/app.config';
+ import { App } from './app/app';
+ 
++// Ô£à Initialiser le th├¿me AVANT le d├®marrage
++if (typeof document !== 'undefined' && typeof window !== 'undefined' && typeof localStorage !== 'undefined') {
++  const theme = localStorage.getItem('smartcity_theme') || 'dark';
++  
++  if (theme === 'dark') {
++    document.documentElement.classList.add('dark');
++    document.documentElement.classList.remove('light');
++    document.body.classList.add('dark');
++    document.body.classList.remove('light');
++  } else {
++    document.documentElement.classList.remove('dark');
++    document.documentElement.classList.add('light');
++    document.body.classList.remove('dark');
++    document.body.classList.add('light');
++  }
++}
++
+ bootstrapApplication(App, appConfig)
+   .catch((err) => console.error(err));
+diff --git a/frontend/src/styles.css b/frontend/src/styles.css
+index 90d4ee0..cc9806a 100644
+--- a/frontend/src/styles.css
++++ b/frontend/src/styles.css
+@@ -1 +1,334 @@
+ /* You can add global styles to this file, and also import other style files */
++
++body {
++  background: #f8fafc;
++  color: #0f172a;
++  transition: background 0.3s ease, color 0.3s ease;
++}
++
++body.dark {
++  background: #0f172a;
++  color: #ffffff;
++}
++
++body.dark *,
++body.dark ::before,
++body.dark ::after {
++  color: #ffffff !important;
++}
++
++body.dark ::placeholder,
++body.dark ::-webkit-input-placeholder,
++body.dark ::-moz-placeholder,
++body.dark :-ms-input-placeholder,
++body.dark :-moz-placeholder {
++  color: #cbd5e1 !important;
++}
++
++body.dark .page-card {
++  background: #111827 !important;
++  border-color: rgba(71, 85, 105, 0.3) !important;
++  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.45) !important;
++}
++
++body.dark input,
++body.dark select {
++  background: #1f2937 !important;
++  color: #e2e8f0 !important;
++  border-color: #374151 !important;
++}
++
++body.dark .primary-btn,
++body.dark .upload-button {
++  background: #2563eb !important;
++  color: #fff !important;
++}
++
++body.dark .secondary-btn,
++body.dark .theme-toggle {
++  background: #1f2937 !important;
++  color: #e2e8f0 !important;
++  border-color: #374151 !important;
++}
++
++body.dark .success-message {
++  color: #86efac !important;
++}
++
++body.dark .error-message {
++  color: #fca5a5 !important;
++}
++
++/* Navbar styles for light mode */
++body.light .topnav {
++  background: rgba(255, 255, 255, 0.92) !important;
++  border-color: rgba(148, 163, 184, 0.18) !important;
++  box-shadow: 0 18px 48px rgba(15, 23, 42, 0.08) !important;
++}
++
++body.light .brand {
++  color: #111827 !important;
++}
++
++body.light .menu a {
++  color: #475569 !important;
++}
++
++body.light .menu a:hover {
++  background: rgba(37, 99, 235, 0.08) !important;
++  color: #1d4ed8 !important;
++}
++
++body.light .menu a.active {
++  background: rgba(37, 99, 235, 0.12) !important;
++  color: #1d4ed8 !important;
++  box-shadow: inset 0 0 0 1px rgba(37, 99, 235, 0.16) !important;
++}
++
++/* Navbar styles for dark mode */
++body.dark .topnav {
++  background: rgba(15, 23, 42, 0.92) !important;
++  border-color: rgba(71, 85, 105, 0.3) !important;
++  box-shadow: 0 18px 48px rgba(0, 0, 0, 0.45) !important;
++}
++
++body.dark .brand {
++  color: #f1f5f9 !important;
++}
++
++body.dark .menu a {
++  color: #cbd5e1 !important;
++}
++
++body.dark .menu a:hover {
++  background: rgba(59, 130, 246, 0.15) !important;
++  color: #60a5fa !important;
++}
++
++body.dark .menu a.active {
++  background: rgba(59, 130, 246, 0.2) !important;
++  color: #60a5fa !important;
++  box-shadow: inset 0 0 0 1px rgba(59, 130, 246, 0.3) !important;
++}
++
++body.dark .panel,
++body.dark .stat-card,
++body.dark .summary-card,
++body.dark .parking-form,
++body.dark .traffic-form,
++body.dark .sensor-form,
++body.dark .summary-panel,
++body.dark .map-panel,
++body.dark .parking-hero,
++body.dark .traffic-hero,
++body.dark .sensors-hero,
++body.dark .dashboard-shell,
++body.dark .parking-shell,
++body.dark .traffic-shell,
++body.dark .sensors-shell,
++body.dark .page-card,
++body.dark .page-shell,
++body.dark .auth-card,
++body.dark .card {
++  background: #111827 !important;
++  color: #e2e8f0 !important;
++  border-color: rgba(100, 116, 139, 0.3) !important;
++}
++
++body.dark .summary-card {
++  background: #111827 !important;
++  color: #e2e8f0 !important;
++  border-color: rgba(100, 116, 139, 0.3) !important;
++}
++
++html.dark .summary-card {
++  background: #111827 !important;
++  color: #e2e8f0 !important;
++  border-color: rgba(100, 116, 139, 0.3) !important;
++}
++
++body.dark .sensor-item,
++body.dark .parking-item,
++body.dark .route-row,
++body.dark .parking-card,
++body.dark .selected-card,
++body.dark .empty-selection,
++body.dark .sensor-card,
++body.dark .parking-row,
++body.dark .traffic-status-row div,
++body.dark .map-embed,
++body.dark .traffic-map-embed,
++body.dark .map-footer div,
++body.dark .map-placeholder,
++body.dark .parking-list .parking-row,
++body.dark .zone-card,
++body.dark .alert-card {
++  background: #111827 !important;
++  border-color: rgba(71, 85, 105, 0.4) !important;
++  color: #ffffff !important;
++}
++
++html.dark .sensor-item,
++html.dark .parking-item,
++html.dark .route-row,
++html.dark .parking-card,
++html.dark .selected-card,
++html.dark .empty-selection,
++html.dark .sensor-card,
++html.dark .parking-row,
++html.dark .traffic-status-row div,
++html.dark .map-embed,
++html.dark .traffic-map-embed,
++html.dark .map-footer div,
++html.dark .map-placeholder,
++html.dark .parking-list .parking-row,
++html.dark .zone-card,
++html.dark .alert-card {
++  background: #111827 !important;
++  border-color: rgba(71, 85, 105, 0.4) !important;
++  color: #ffffff !important;
++}
++
++html.dark .sensor-item,
++html.dark .parking-item,
++html.dark .route-row,
++html.dark .parking-card,
++html.dark .selected-card,
++html.dark .empty-selection,
++html.dark .sensor-card,
++html.dark .parking-row,
++html.dark .traffic-status-row div,
++html.dark .map-embed,
++html.dark .traffic-map-embed,
++html.dark .map-footer div,
++html.dark .map-placeholder,
++html.dark .parking-list .parking-row,
++html.dark .zone-card,
++html.dark .alert-card {
++  background: #111827 !important;
++  border-color: rgba(71, 85, 105, 0.4) !important;
++  color: #ffffff !important;
++}
++
++body.dark .status-badge,
++body.dark .status-chip,
++body.dark .alert-badge,
++body.dark .network-item,
++body.dark .legend-pill,
++body.dark .zone-card {
++  color: white !important;
++}
++
++body.dark .hero-meta {
++  background: #111827 !important;
++  border-color: rgba(71, 85, 105, 0.4) !important;
++}
++
++body.dark .hero-meta span {
++  color: #94a3b8 !important;
++}
++
++body.dark .hero-meta strong {
++  color: #e2e8f0 !important;
++}
++
++body.dark .status-pill {
++  background: #22c55e !important;
++  color: #0f172a !important;
++  box-shadow: inset 0 0 0 1px rgba(164, 243, 208, 0.4) !important;
++}
++
++body.dark app-profile {
++  background: url('https://images.unsplash.com/photo-1512453979798-5ea266f8880c?auto=format&fit=crop&w=1400&q=80') !important;
++  background-size: cover !important;
++  background-position: center !important;
++  background-repeat: no-repeat !important;
++}
++
++body.dark app-profile .profile-page,
++body.dark app-profile .profile-grid {
++  background: transparent !important;
++}
++
++body.dark app-profile .profile-hero,
++body.dark app-profile .profile-overview,
++body.dark app-profile .profile-form-card,
++body.dark app-profile .card,
++body.dark app-profile .avatar-block,
++body.dark app-profile .hero-meta,
++body.dark app-profile .hero-badge,
++body.dark app-profile .photo-actions,
++body.dark app-profile .upload-button,
++body.dark app-profile .secondary-button,
++body.dark app-profile .status-chip,
++body.dark app-profile .profile-stats .stat-card,
++body.dark app-profile .card-header,
++body.dark app-profile .form-group input,
++body.dark app-profile .form-group select,
++body.dark app-profile .form-group textarea,
++body.dark app-profile .profile-form,
++body.dark app-profile .loading-card {
++  background: #111827 !important;
++  color: #ffffff !important;
++  border-color: rgba(71, 85, 105, 0.45) !important;
++}
++
++body.dark app-profile .stat-card {
++  background: #1f2937 !important;
++  border-color: rgba(71, 85, 105, 0.4) !important;
++}
++
++body.dark app-profile .avatar-block {
++  background: linear-gradient(180deg, #0f172a, #1f2937) !important;
++}
++
++body.dark app-profile .hero-badge {
++  background: rgba(37, 99, 235, 0.16) !important;
++  color: #ffffff !important;
++}
++
++body.dark app-profile .secondary-button {
++  background: rgba(255, 255, 255, 0.08) !important;
++  color: #ffffff !important;
++  border-color: rgba(148, 163, 184, 0.38) !important;
++}
++
++body.dark app-profile .status-chip {
++  background: rgba(255, 255, 255, 0.08) !important;
++  color: #ffffff !important;
++}
++
++body.dark app-dashboard,
++body.dark app-traffic,
++body.dark app-parking,
++body.dark app-sensors,
++body.dark app-profile,
++body.dark app-login,
++body.dark app-register {
++  background-image: url('https://images.unsplash.com/photo-1512453979798-5ea266f8880c?auto=format&fit=crop&w=1400&q=80') !important;
++  background-size: cover !important;
++  background-position: center !important;
++  background-repeat: no-repeat !important;
++}
++
++.dashboard-shell {
++  background: rgba(255, 255, 255, 0.88);
++  border-radius: 2.5rem;
++  box-shadow: 0 40px 80px rgba(15, 23, 42, 0.12);
++  border: 1px solid rgba(148, 163, 184, 0.14);
++  backdrop-filter: blur(18px);
++}
++
++.dashboard-hero {
++  background: linear-gradient(135deg, rgba(59, 130, 246, 0.14), rgba(249, 250, 251, 0.96));
++  border-radius: 2rem;
++  padding: 2rem;
++  box-shadow: 0 28px 60px rgba(15, 23, 42, 0.1);
++  border: 1px solid rgba(148, 163, 184, 0.16);
++}
++
++.traffic-layout {
++  display: grid;
++  grid-template-columns: 1fr;
++  gap: 1rem;
++}
+diff --git a/frontend/tsconfig.app.json b/frontend/tsconfig.app.json
+index ef19921..b10cb83 100644
+--- a/frontend/tsconfig.app.json
++++ b/frontend/tsconfig.app.json
+@@ -1,17 +1,19 @@
+-/* To learn more about Typescript configuration file: https://www.typescriptlang.org/docs/handbook/tsconfig-json.html. */
+-/* To learn more about Angular compiler options: https://angular.dev/reference/configs/angular-compiler-options. */
+ {
+   "extends": "./tsconfig.json",
+   "compilerOptions": {
+     "outDir": "./out-tsc/app",
+-    "types": [
+-      "node"
+-    ]
++    "rootDir": "./src",
++    "types": ["node"]
+   },
++  "files": [
++    "src/main.ts"
++  ],
+   "include": [
++    "src/**/*.d.ts",
+     "src/**/*.ts"
+   ],
+   "exclude": [
++    "src/test.ts",
+     "src/**/*.spec.ts"
+   ]
+ }

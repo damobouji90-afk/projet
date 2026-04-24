@@ -11,6 +11,8 @@ return new class extends Migration
         Schema::create('parkings', function (Blueprint $table) {
             $table->id();
             $table->string('name');
+            $table->string('location')->default('Centre-Ville');
+            $table->integer('capacity')->default(0);
             $table->integer('available_places');
             $table->timestamps();
         });

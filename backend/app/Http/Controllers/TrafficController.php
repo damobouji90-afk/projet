@@ -8,14 +8,26 @@ use Illuminate\Http\Request;
 class TrafficController extends Controller
 {
     // 📡 READ
-    public function index()
+    public function index(Request $request)
     {
-        return Traffic::all();
+        $query = Traffic::query();
+
+        if ($request->has('date')) {
+            $query->whereDate('date', $request->query('date'));
+        }
+
+        return $query->get();
     }
 
     // ➕ CREATE
     public function store(Request $request)
     {
+        $request->validate([
+            'location' => 'required|string|max:255',
+            'level' => 'required|integer|min:1|max:10',
+            'date' => 'required|date',
+        ]);
+
         return Traffic::create($request->all());
     }
 
@@ -23,6 +35,13 @@ class TrafficController extends Controller
     public function update(Request $request, $id)
     {
         $traffic = Traffic::findOrFail($id);
+
+        $request->validate([
+            'location' => 'required|string|max:255',
+            'level' => 'required|integer|min:1|max:10',
+            'date' => 'sometimes|required|date',
+        ]);
+
         $traffic->update($request->all());
 
         return $traffic;

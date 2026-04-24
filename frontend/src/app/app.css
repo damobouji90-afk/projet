@@ -1,0 +1,700 @@
+/* ===== ROOT COMPONENT STYLES ===== */
+:host {
+  --bright-blue: oklch(51.01% 0.274 263.83);
+  --electric-violet: oklch(53.18% 0.28 296.97);
+  --gray-900: oklch(19.37% 0.006 300.98);
+  --gray-700: oklch(36.98% 0.014 302.71);
+
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  box-sizing: border-box;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  display: flex;
+  flex-direction: column;
+  height: 100dvh;
+}
+
+.topnav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 2rem;
+  background: rgba(255, 255, 255, 0.92);
+  border: 1px solid rgba(148, 163, 184, 0.18);
+  box-shadow: 0 18px 48px rgba(15, 23, 42, 0.08);
+  backdrop-filter: blur(20px);
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  gap: 1rem;
+}
+
+.brand {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #111827;
+}
+
+.menu-container {
+  display: flex;
+  gap: 1.5rem;
+  align-items: center;
+  margin-left: auto;
+}
+
+.menu {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.menu a {
+  color: #475569;
+  text-decoration: none;
+  font-weight: 600;
+  padding: 0.65rem 1rem;
+  border-radius: 9999px;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.menu a:hover {
+  background: rgba(37, 99, 235, 0.08);
+  color: #1d4ed8;
+}
+
+.menu a.active {
+  background: rgba(37, 99, 235, 0.12);
+  color: #1d4ed8;
+  box-shadow: inset 0 0 0 1px rgba(37, 99, 235, 0.16);
+}
+
+.auth-buttons {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  margin-left: auto;
+}
+
+.auth-buttons a,
+.logout-btn {
+  padding: 0.65rem 1rem;
+  border-radius: 9999px;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.95rem;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: all 0.2s ease;
+}
+
+.logout-btn {
+  background: #2563eb;
+  color: #fff;
+  border-color: transparent;
+}
+
+.logout-btn:hover,
+.auth-buttons a:hover {
+  transform: translateY(-1px);
+}
+
+.login-link {
+  color: #2563eb;
+  background: rgba(37, 99, 235, 0.08);
+}
+
+.login-link:hover {
+  background: rgba(37, 99, 235, 0.14);
+}
+
+.register-link {
+  background: #2563eb;
+  color: white;
+}
+
+.register-link:hover {
+  background: #1d4ed8;
+}
+
+.login-btn {
+  padding: 0.65rem 1rem;
+  border-radius: 9999px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  cursor: pointer;
+  border: none;
+  transition: all 0.2s ease;
+  color: #2563eb;
+  background: rgba(37, 99, 235, 0.08);
+}
+
+.login-btn:hover {
+  background: rgba(37, 99, 235, 0.14);
+  transform: translateY(-1px);
+}
+
+.register-btn {
+  padding: 0.65rem 1rem;
+  border-radius: 9999px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  cursor: pointer;
+  border: none;
+  transition: all 0.2s ease;
+  background: #2563eb;
+  color: white;
+}
+
+.register-btn:hover {
+  background: #1d4ed8;
+  transform: translateY(-1px);
+}
+
+main {
+  flex: 1;
+  overflow-y: auto;
+  width: 100%;
+  background: #ffffff;
+}
+
+/* ===== GLOBAL THEME TOGGLE ===== */
+
+.theme-toggle {
+  border: 1px solid rgba(148, 163, 184, 0.3);
+  background: #f8fafc;
+  color: #0f172a;
+  padding: 0.75rem 1rem;
+  border-radius: 999px;
+  cursor: pointer;
+  font-weight: 700;
+  transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+}
+
+.theme-toggle:hover {
+  background: rgba(37, 99, 235, 0.12);
+  transform: translateY(-1px);
+}
+
+body.dark .theme-toggle {
+  background: #1d4ed8;
+  color: white;
+  border-color: rgba(96, 165, 250, 0.3);
+}
+
+body.dark .theme-toggle:hover {
+  background: #2563eb;
+}
+
+.user-card {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.35rem 0.75rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.45);
+  border: 1px solid rgba(148, 163, 184, 0.18);
+}
+
+.user-avatar {
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 9999px;
+  overflow: hidden;
+  display: grid;
+  place-items: center;
+  background: #e2e8f0;
+  color: #1f2937;
+  font-weight: 700;
+  font-size: 0.95rem;
+}
+
+.user-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.user-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+  line-height: 1.1;
+}
+
+.user-role {
+  font-size: 0.75rem;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.user-name {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #111827;
+}
+
+/* ===== LIGHT MODE (DEFAULT) ===== */
+
+:root.light,
+:root {
+  color-scheme: light;
+}
+
+html.light {
+  background-color: #ffffff !important;
+}
+
+body.light {
+  background-color: #ffffff !important;
+  color: #0f172a !important;
+}
+
+body.light .topnav {
+  background: rgba(255, 255, 255, 0.92) !important;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.18) !important;
+  color: #0f172a !important;
+}
+
+body.light .topnav .brand {
+  color: #111827 !important;
+}
+
+body.light .topnav .menu a {
+  color: #475569 !important;
+}
+
+body.light .topnav .menu a.active,
+body.light .topnav .menu a:hover {
+  background: rgba(37, 99, 235, 0.08) !important;
+  color: #1d4ed8 !important;
+}
+
+body.light .logout-btn {
+  background: #2563eb !important;
+  color: white !important;
+}
+
+/* ===== DARK MODE ===== */
+
+:root.dark {
+  color-scheme: dark;
+}
+
+html.dark {
+  background-color: #0f172a !important;
+}
+
+body.dark {
+  background-color: #0f172a !important;
+  color: #e2e8f0 !important;
+}
+
+body.dark .topnav {
+  background: rgba(15, 23, 42, 0.98) !important;
+  border-bottom: 1px solid rgba(79, 102, 156, 0.2) !important;
+  color: #e2e8f0 !important;
+}
+
+body.dark .topnav .brand {
+  color: #ffffff !important;
+}
+
+body.dark .topnav .menu a {
+  color: #ffffff !important;
+}
+
+body.dark .user-card {
+  background: #111827 !important;
+  border-color: rgba(71, 85, 105, 0.4) !important;
+}
+
+body.dark .user-name {
+  color: #f8fafc;
+}
+
+body.dark .user-role {
+  color: #94a3b8;
+}
+
+body.dark .topnav .menu a.active,
+body.dark .topnav .menu a:hover {
+  background: rgba(37, 99, 235, 0.15) !important;
+  color: #fff !important;
+}
+
+body.dark .panel,
+body.dark .stat-card,
+body.dark .page-card,
+body.dark .dashboard-shell,
+body.dark .traffic-shell,
+body.dark .parking-shell,
+body.dark .sensors-shell,
+body.dark .page-shell,
+body.dark .auth-card,
+body.dark .parking-card,
+body.dark .sensor-item,
+body.dark .route-row,
+body.dark .selected-card,
+body.dark .empty-selection,
+body.dark .alert-card,
+body.dark .zone-card,
+body.dark .status-card,
+body.dark .traffic-card,
+body.dark .user-card {
+  background: #111827 !important;
+  border-color: rgba(71, 85, 105, 0.4) !important;
+  color: #ffffff !important;
+}
+
+body.dark .stat-card.blue { background: rgba(59, 130, 246, 0.1) !important; }
+body.dark .stat-card.cyan { background: rgba(6, 182, 212, 0.1) !important; }
+body.dark .stat-card.green { background: rgba(34, 197, 94, 0.1) !important; }
+body.dark .stat-card.violet { background: rgba(139, 92, 246, 0.1) !important; }
+
+body.dark .traffic-shell,
+body.dark .parking-shell,
+body.dark .dashboard-shell,
+body.dark .sensors-shell,
+body.dark .panel,
+body.dark .map-panel,
+body.dark .summary-panel,
+body.dark .parking-form,
+body.dark .traffic-form,
+body.dark .sensor-form,
+body.dark .stat-card,
+body.dark .page-card,
+body.dark .page-shell,
+body.dark .auth-card,
+body.dark .parking-card,
+body.dark .sensor-item,
+body.dark .route-row,
+body.dark .selected-card,
+body.dark .empty-selection,
+body.dark .alert-card,
+body.dark .zone-card,
+body.dark .status-card,
+body.dark .traffic-card,
+body.dark .user-card {
+  color: #ffffff !important;
+}
+
+body.dark .traffic-shell *,
+body.dark .parking-shell *,
+body.dark .dashboard-shell *,
+body.dark .sensors-shell * {
+  color: #ffffff !important;
+}
+
+/* ===== LIGHT MODE - CONTAINERS ===== */
+
+body.light .page-shell,
+body.light .parking-shell,
+body.light .traffic-shell,
+body.light .sensors-shell,
+body.light .dashboard-shell,
+body.light .page-card,
+body.light .auth-card,
+body.light .panel,
+body.light .stat-card,
+body.light .parking-hero,
+body.light .traffic-hero,
+body.light .sensors-hero,
+body.light .summary-panel,
+body.light .map-panel,
+body.light .parking-form,
+body.light .traffic-form,
+body.light .sensors-form {
+  background: white !important;
+  color: #0f172a !important;
+  border-color: rgba(148, 163, 184, 0.3) !important;
+}
+
+body.light .summary-card {
+  background: #f8fafc !important;
+  color: #0f172a !important;
+  border-color: rgba(148, 163, 184, 0.2) !important;
+}
+
+body.light h1,
+body.light h2,
+body.light h3,
+body.light h4,
+body.light h5,
+body.light h6 {
+  color: #111827 !important;
+}
+
+body.light p,
+body.light label,
+body.light span {
+  color: #475569 !important;
+}
+
+body.light input,
+body.light textarea,
+body.light select {
+  background: #f8fafc !important;
+  color: #0f172a !important;
+  border-color: #d1d5db !important;
+}
+
+body.light input::placeholder,
+body.light textarea::placeholder {
+  color: #9ca3af !important;
+}
+
+body.light button,
+body.light .btn {
+  background: #2563eb !important;
+  color: white !important;
+}
+
+body.light table {
+  background: white !important;
+  color: #0f172a !important;
+}
+
+body.light th {
+  background: #f8fafc !important;
+  color: #0f172a !important;
+}
+
+body.light td {
+  color: #0f172a !important;
+  border-color: #e5e7eb !important;
+}
+
+/* ===== DARK MODE - CONTAINERS ===== */
+
+body.dark .page-shell,
+body.dark .parking-shell,
+body.dark .traffic-shell,
+body.dark .sensors-shell,
+body.dark .dashboard-shell,
+body.dark .page-card,
+body.dark .auth-card,
+body.dark .panel,
+body.dark .stat-card,
+body.dark .parking-hero,
+body.dark .traffic-hero,
+body.dark .sensors-hero,
+body.dark .summary-panel,
+body.dark .map-panel,
+body.dark .parking-form,
+body.dark .traffic-form,
+body.dark .sensors-form,
+body.dark .card,
+body.dark .container,
+body.dark .box,
+body.dark .summary-card {
+  background: #111827 !important;
+  color: #e2e8f0 !important;
+  border-color: rgba(100, 116, 139, 0.3) !important;
+}
+
+body.dark .summary-card span {
+  color: #94a3b8 !important;
+}
+
+body.dark .summary-card strong {
+  color: #f1f5f9 !important;
+}
+
+body.dark h1,
+body.dark h2,
+body.dark h3,
+body.dark h4,
+body.dark h5,
+body.dark h6 {
+  color: #f1f5f9 !important;
+}
+
+body.dark p,
+body.dark label,
+body.dark span {
+  color: #ffffff !important;
+}
+
+body.dark .eyebrow {
+  color: #60a5fa !important;
+}
+
+body.dark .hero-meta {
+  background: #111827 !important;
+  border-color: rgba(71, 85, 105, 0.4) !important;
+}
+
+body.dark .hero-meta span {
+  color: #94a3b8 !important;
+}
+
+body.dark .hero-meta strong {
+  color: #e2e8f0 !important;
+}
+
+body.dark .status-pill {
+  background: #1f2937 !important;
+  color: #e2e8f0 !important;
+}
+
+body.dark input,
+body.dark textarea,
+body.dark select {
+  background: #0f172a !important;
+  color: #e2e8f0 !important;
+  border-color: #334155 !important;
+}
+
+body.dark input::placeholder,
+body.dark textarea::placeholder {
+  color: #64748b !important;
+}
+
+body.dark input:focus,
+body.dark textarea:focus,
+body.dark select:focus {
+  border-color: #2563eb !important;
+  background: #1e293b !important;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1) !important;
+}
+
+body.dark button,
+body.dark .btn {
+  background: #2563eb !important;
+  color: white !important;
+}
+
+body.dark button:hover,
+body.dark .btn:hover {
+  background: #1d4ed8 !important;
+}
+
+body.dark .btn.cancel {
+  background: #ef4444 !important;
+}
+
+body.dark .btn.modify {
+  background: #f59e0b !important;
+}
+
+body.dark table {
+  background: #1e293b !important;
+  color: #e2e8f0 !important;
+}
+
+body.dark th {
+  background: #0f172a !important;
+  color: #94a3b8 !important;
+}
+
+body.dark td {
+  color: #cbd5e1 !important;
+  border-color: #334155 !important;
+}
+
+/* ===== MESSAGES ===== */
+
+body.dark .success-message {
+  background: rgba(34, 197, 94, 0.1) !important;
+  border-color: rgba(34, 197, 94, 0.3) !important;
+  color: #86efac !important;
+}
+
+body.dark .error-message {
+  background: rgba(239, 68, 68, 0.1) !important;
+  border-color: rgba(239, 68, 68, 0.3) !important;
+  color: #fca5a5 !important;
+}
+
+body.light .success-message {
+  background: rgba(34, 197, 94, 0.1) !important;
+  border-color: rgba(34, 197, 94, 0.3) !important;
+  color: #166534 !important;
+}
+
+body.light .error-message {
+  background: rgba(239, 68, 68, 0.1) !important;
+  border-color: rgba(239, 68, 68, 0.3) !important;
+  color: #b91c1c !important;
+}
+
+/* ===== LINKS ===== */
+
+body.light a {
+  color: #2563eb !important;
+}
+
+body.light a:hover {
+  color: #1d4ed8 !important;
+}
+
+body.dark a {
+  color: #60a5fa !important;
+}
+
+body.dark a:hover {
+  color: #93c5fd !important;
+}
+
+/* ===== MAPS ===== */
+
+body.dark .map-frame {
+  background: #0f172a !important;
+  border-color: #334155 !important;
+}
+
+body.light .map-frame {
+  background: #f8fafc !important;
+  border-color: #d1d5db !important;
+}
+
+/* ===== SCROLLBARS ===== */
+
+body.dark ::-webkit-scrollbar-track {
+  background: #0f172a;
+}
+
+body.dark ::-webkit-scrollbar-thumb {
+  background: #334155;
+}
+
+body.dark ::-webkit-scrollbar-thumb:hover {
+  background: #475569;
+}
+
+body.light ::-webkit-scrollbar-track {
+  background: #f8fafc;
+}
+
+body.light ::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+}
+
+body.light ::-webkit-scrollbar-thumb:hover {
+  background: #9ca3af;
+}
+
+/* ===== DARK MODE BUTTON STYLES ===== */
+
+body.dark .login-btn {
+  color: #60a5fa !important;
+  background: rgba(37, 99, 235, 0.1) !important;
+}
+
+body.dark .login-btn:hover {
+  background: rgba(37, 99, 235, 0.2) !important;
+}
+
+body.dark .register-btn {
+  background: #2563eb !important;
+  color: white !important;
+}
+
+body.dark .register-btn:hover {
+  background: #1d4ed8 !important;
+}
